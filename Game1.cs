@@ -189,6 +189,19 @@ namespace Assessment
                 Vector3 gravity = new Vector3(0, -0.01f, 0);
                 ///////////////////////////////////////////////////////////////////
                 //
+
+                float fallStart = (float)(gameTime.TotalGameTime.TotalSeconds);
+                float TimeSinceFall = (float)(gameTime.TotalGameTime.TotalSeconds) - fallStart;
+                rock.acceleration = rock.velocity * fallStart;
+                rock.position -= rock.velocity * rock.acceleration;
+                    //gravity * TimeSinceFall * TimeSinceFall / 2f + rock.velocity * ;
+              if (rock.position.Y <0)
+              {
+                  rock.position.Y = 0f;
+                  fallStart = 0f;
+                  rockFalling = !rockFalling;
+              }
+
                 // CODE FOR TASK 4 SHOULD BE ENTERED HERE
                 //
                 ///////////////////////////////////////////////////////////////////
