@@ -78,10 +78,27 @@ namespace Assessment
              {
                 foreach (BasicEffect effect in mesh.Effects) // This loop then goes through every effect in each mesh.
                 {   
-                    effect.World = transforms[mesh.ParentBone.Index]; // begin dealing with transforms to render the object into the game world
-                                                                      // The following effects allow the object to be drawn in the correct place, with the correct rotation and scale.
-                                                                      ///////////////////////////////////////////////////////////////////
-                                                                      //
+                    effect.World = transforms[mesh.ParentBone.Index];
+                    // begin dealing with transforms to render the object into the game world
+                    // The following effects allow the object to be drawn in the correct place, with the correct rotation and scale.
+                    ///////////////////////////////////////////////////////////////////
+                    //
+
+                    effect.World = transforms[mesh.ParentBone.Index];
+
+                    effect.World *= Matrix.CreateScale(scale);
+                    effect.World *= Matrix.CreateRotationX(rotation.X);
+                    effect.World *= Matrix.CreateRotationY(rotation.Y);
+                    effect.World *= Matrix.CreateRotationZ(rotation.Z);
+
+
+                    effect.World *= Matrix.CreateTranslation(position);
+
+                    effect.View = Matrix.CreateLookAt(cam.target + new Vector3(0, 100, -200), cam.target, Vector3.Up);
+
+                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(cam.fieldOfView, cam.aspectRatio, cam.nearPlane, cam.farPlane);
+
+
 
                     // CODE FOR TASK 1 SHOULD BE ENTERED HERE
                     //
