@@ -59,6 +59,19 @@ namespace Assessment
                 ///////////////////////////////////////////////////////////////////
                 //
                 // CODE FOR TASK 3 SHOULD BE ENTERED HERE
+                //find the center first by the startin at initial point
+                b.Min = position + mesh.Meshes[0].BoundingSphere.Center + new Vector3(-5,-5,0);
+
+                //move center to top left corner
+                b.Min.X -= (mesh.Meshes[0].BoundingSphere.Radius) * collisionScale.X * scale;
+                b.Min.Y -= (mesh.Meshes[0].BoundingSphere.Radius) * collisionScale.Y * scale;
+                b.Min.Z -= (mesh.Meshes[0].BoundingSphere.Radius) * collisionScale.Z * scale;
+
+                b.Max.X = b.Min.X + mesh.Meshes[0].BoundingSphere.Radius * 2 * collisionScale.X * scale;
+                b.Max.Y = b.Min.Y + mesh.Meshes[0].BoundingSphere.Radius * 2 * collisionScale.Y * scale;
+                b.Max.Z = b.Min.Z + mesh.Meshes[0].BoundingSphere.Radius * 2 * collisionScale.Z * scale;
+
+
                 //
                 ///////////////////////////////////////////////////////////////////
                 return b;
