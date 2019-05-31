@@ -190,17 +190,8 @@ namespace Assessment
                 ///////////////////////////////////////////////////////////////////
                 //
 
-                float fallStart = (float)(gameTime.TotalGameTime.TotalSeconds);
-                float TimeSinceFall = (float)(gameTime.TotalGameTime.TotalSeconds) - fallStart;
-                rock.acceleration = rock.velocity * fallStart;
-                rock.position -= rock.velocity * rock.acceleration;
-                    //gravity * TimeSinceFall * TimeSinceFall / 2f + rock.velocity * ;
-              if (rock.position.Y <0)
-              {
-                  rock.position.Y = 0f;
-                  fallStart = 0f;
-                  rockFalling = !rockFalling;
-              }
+                rock.position.Y += gravity.Y * dt * dt / 2f + rock.velocity.Y * dt;
+                rock.velocity.Y += gravity.Y;
 
                 // CODE FOR TASK 4 SHOULD BE ENTERED HERE
                 //
@@ -228,10 +219,53 @@ namespace Assessment
 
         private void ElasticCollision(basicCuboid w)
         {
-            player.velocity *= -1;
-            player.position = player.storedPos;
+            //player.velocity *= -1;
+            //player.position = player.storedPos;
             ///////////////////////////////////////////////////////////////////
             //
+
+            // need the perpendicular vector to the face of the box we hit
+            // to do this we need two vectors on the face of the box we hit
+            Vector3 faceVector1;
+            Vector3 faceVector2;
+
+            // get the corners of the box we hit so we can calculate face vectors
+            Vector3[] corners = w.collisionbox.GetCorners();
+            // returns corners of the box that are perpendicular to the z axis(facing along the z axis)
+            // 0-3 is the near face 4-7 is the far face
+            //start upper left then clockwise to upper right, lower right, lower left
+
+
+            // move back our player to previous position so they are not in the box
+            player.position = player.storedPos;
+
+            //is the players new position overlapping the X direction
+            if((player.hitBox.Min.X -player.velocity.X) > w.collisionbox.Max.X || (player.hitBox.Max.X-player.velocity.X) < w.collisionbox.Min.X)
+            {
+                // overlapping from right/left 
+                //line from back bottom right to front top right
+                faceVector1 = corners[1] - corners[6];
+                //line from back bottom right to front bottom right
+                faceVector2 = corners[2] - corners[6];
+            }
+            else // if we are not overlapping right/left, we are overlapping front/back (z axis)
+            {
+                //line from front top left to front top right
+                faceVector1 = corners[1] - corners[0];
+                //line from front top front left to front bottom right
+                faceVector2 = corners[2] - corners[0];
+            }
+            // we ignore the possibility of y direction (no jumping
+
+            // get a cross product between these two vectors to define a normal perpendicular to the plane (face)
+            Vector3 normal = Vector3.Cross(faceVector1, faceVector2);
+            normal.Normalize();
+
+            //use this normal vector to reflect the player's velocity
+            // this uses a dot product equation internally
+            player.velocity = Vector3.Reflect(player.velocity, normal);
+
+
             // CODE FOR TASK 7 SHOULD BE ENTERED HERE
             //
             ///////////////////////////////////////////////////////////////////
