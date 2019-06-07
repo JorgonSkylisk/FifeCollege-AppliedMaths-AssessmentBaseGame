@@ -106,8 +106,8 @@ namespace Assessment
             sunlight.direction = Vector3.Normalize(new Vector3(1.5f, -1.5f, -1.5f));
         }
 
-        public enum IntegrationMethod { ForwardEuler, LeapFrog, Verlet };
-        IntegrationMethod currentIntegrationMethod = IntegrationMethod.ForwardEuler;
+        public enum IntegrationMethod { ForwardEuler, LeapFrog, Verlet, ImplicitEuler };
+        IntegrationMethod currentIntegrationMethod = IntegrationMethod.ImplicitEuler;
 
         private void MovePlayer(int dt)
         {
@@ -122,12 +122,24 @@ namespace Assessment
 
                 ///////////////////////////////////////////////////////////////////
                 //
+                case IntegrationMethod.ImplicitEuler:
+
+                    player.velocity += acceleration * (dt);
+                    player.position += player.velocity * dt;
+
+                    break;
+                case IntegrationMethod.Verlet:
+
+                    Vector3 OldVel = player.velocity;
+                    player.velocity = player.velocity + acceleration * dt;
+                    player.position = player.position + (OldVel + player.velocity) * dt;
+
+                    break;
+
                 // CODE FOR TASK 2 SHOULD BE ENTERED HERE
                 //
                 ///////////////////////////////////////////////////////////////////
                 case IntegrationMethod.LeapFrog:
-                    break;
-                case IntegrationMethod.Verlet:
                     break;
             }
         }
