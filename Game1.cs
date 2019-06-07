@@ -30,6 +30,7 @@ namespace Assessment
         basicCuboid[] walls = new basicCuboid[20];
         int doorSequenceTimer;
         int doorSequenceFinalTime = 2500;
+        float timeSinceRockFall;
 
         public Game1()
         {
@@ -194,16 +195,26 @@ namespace Assessment
             if (player.hitBox.Intersects(TriggerBoxRockFall) && !rockFalling)
             {
                 rockFalling = true;
-                rock.velocity = new Vector3(0, 0.2f, 0);
+
+                // Assign rock fall start time
             }
             if (rockFalling)
             {
                 Vector3 gravity = new Vector3(0, -0.01f, 0);
                 ///////////////////////////////////////////////////////////////////
                 //
-
-                rock.position.Y += gravity.Y * dt * dt / 2f + rock.velocity.Y * dt;
-                rock.velocity.Y += gravity.Y;
+                if (rock.position.Y >= 0f)
+                {
+                    rock.position.Y += gravity.Y * dt * dt / 2f + rock.velocity.Y * dt;
+                    rock.velocity.Y += gravity.Y;
+                }else
+                {
+                    rock.position.Y = 0f;
+                    rock.velocity.Y = 0f;
+                }
+                    // Calculate time since rock since falling started
+                // Calculate rock’s new y pos using derived pos
+                // Stop when reach the ground (0)
 
                 // CODE FOR TASK 4 SHOULD BE ENTERED HERE
                 //
@@ -221,9 +232,20 @@ namespace Assessment
                 ///////////////////////////////////////////////////////////////////
                 //
                 // CODE FOR TASK 5 SHOULD BE ENTERED HERE
-                //
-                ///////////////////////////////////////////////////////////////////
+                doorSequenceTimer += gameTime.ElapsedGameTime.Milliseconds;
+
+                if (doorSequenceTimer >= doorSequenceFinalTime)
+                {
+                    //Timer finished                  
+                    doorSequenceTimer = doorSequenceFinalTime;
+                }
+
+                newPos = CubicInterpolation(doorStartPoint, doorEndPoint, (float)doorSequenceTimer, (float)doorSequenceFinalTime);
+                door.SetUpVertices(newPos);
             }
+            //
+            ///////////////////////////////////////////////////////////////////
+        
 
 
             base.Update(gameTime);
@@ -285,14 +307,36 @@ namespace Assessment
         ///////////////////////////////////////////////////////////////////
         //
         // CODE FOR TASK 6 SHOULD BE ENTERED HERE
+  
+        public Vector3 CubicInterpolation(Vector3 initialPos, Vector3 endPos, float
+        time, float duration)
+        {
+            // Calculate our independant variable time as a proportion (ratio) of time passed to the total duration
+            // (between 0 and 1)
+
+            float t = time / duration;
+
+            // Calculate p (position aka distance traveled from start)
+            // Using our derived cubic equation
+            // Produces a fraction of the complete distance (between 0 and 1)
+            // This is our scaling factor
+            float p = -2f * (t * t * t) + 3f * (t * t);
+
+            Vector3 totalDistance = endPos - initialPos;
+            // endpoint = startPoint + totalDistance
+
+            // Determine the distance traveled (how far we have actually gone so far)
+            // By scaling the total distance by our generated scaling factor (p)
+            Vector3 distanceTraveled = totalDistance * p;
+
+            // Determine the new position by adding the distance traveled to the start point
+            Vector3 newPosition = initialPos + distanceTraveled;
+
+            return newPosition;
+        }
         //
         ///////////////////////////////////////////////////////////////////
-        public Vector3 CubicInterpolation(Vector3 initialPos, Vector3 endPos, float
-        time)
-        {
-            return new Vector3(0, 0, 0);
-        }
-
+       
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
