@@ -30,7 +30,7 @@ namespace Assessment
         basicCuboid[] walls = new basicCuboid[20];
         int doorSequenceTimer;
         int doorSequenceFinalTime = 2500;
-        float timeSinceRockFall;
+        float fallStart = 0;
 
         public Game1()
         {
@@ -197,24 +197,29 @@ namespace Assessment
                 rockFalling = true;
 
                 // Assign rock fall start time
+                fallStart = (float)gameTime.TotalGameTime.TotalSeconds;
             }
             if (rockFalling)
             {
-                Vector3 gravity = new Vector3(0, -0.01f, 0);
+                Vector3 gravity = new Vector3(0, -100f, 0);
                 ///////////////////////////////////////////////////////////////////
-                //
-                if (rock.position.Y >= 0f)
-                {
-                    rock.position.Y += gravity.Y * dt * dt / 2f + rock.velocity.Y * dt;
-                    rock.velocity.Y += gravity.Y;
-                }else
+
+                Vector3 rockStartPos = new Vector3(25, 60, -50);
+                float timeSinceRockFall = (float)gameTime.TotalGameTime.TotalSeconds - fallStart;
+
+                rock.position.Y = gravity.Y * timeSinceRockFall * timeSinceRockFall / 2f + rock.velocity.Y* timeSinceRockFall + rockStartPos.Y;
+
+
+                if (rock.position.Y < 0f)
                 {
                     rock.position.Y = 0f;
-                    rock.velocity.Y = 0f;
+                    fallStart = 0f;
                 }
                     // Calculate time since rock since falling started
                 // Calculate rock’s new y pos using derived pos
                 // Stop when reach the ground (0)
+
+            
 
                 // CODE FOR TASK 4 SHOULD BE ENTERED HERE
                 //
