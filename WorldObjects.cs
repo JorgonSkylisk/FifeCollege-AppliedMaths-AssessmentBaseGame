@@ -60,7 +60,7 @@ namespace Assessment
                 //
                 // CODE FOR TASK 3 SHOULD BE ENTERED HERE
                 //find the center first by the startin at initial point
-                b.Min = position + mesh.Meshes[0].BoundingSphere.Center + new Vector3(-5,-5,0);
+                b.Min = position - mesh.Meshes[0].BoundingSphere.Center * scale;
 
                 //move center to top left corner
                 b.Min.X -= (mesh.Meshes[0].BoundingSphere.Radius) * collisionScale.X * scale;
@@ -96,10 +96,10 @@ namespace Assessment
                     // The following effects allow the object to be drawn in the correct place, with the correct rotation and scale.
                     ///////////////////////////////////////////////////////////////////
                     //
-
-                    effect.World = transforms[mesh.ParentBone.Index];
-
                     effect.World *= Matrix.CreateScale(scale);
+
+                    //effect.World = transforms[mesh.ParentBone.Index];
+
                     effect.World *= Matrix.CreateRotationX(rotation.X);
                     effect.World *= Matrix.CreateRotationY(rotation.Y);
                     effect.World *= Matrix.CreateRotationZ(rotation.Z);
@@ -107,11 +107,11 @@ namespace Assessment
 
                     effect.World *= Matrix.CreateTranslation(position);
 
-                    effect.View = Matrix.CreateLookAt(cam.target + new Vector3(0, 100, -200), cam.target, Vector3.Up);
+                    effect.View = Matrix.CreateLookAt(cam.position, cam.target, cam.whichWayIsUp);
 
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(cam.fieldOfView, cam.aspectRatio, cam.nearPlane, cam.farPlane);
 
-
+                    
 
                     // CODE FOR TASK 1 SHOULD BE ENTERED HERE
                     //
